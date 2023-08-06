@@ -15,11 +15,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $bloodPressure = mysqli_real_escape_string($conn, $_POST['bloodPressure']);
     $complaint = mysqli_real_escape_string($conn, $_POST['complaint']);
 
-    // Insert data into database
-    $sql = "INSERT INTO medical_record (name, age, sex, address, blood_type, weight, height, temperature, blood_pressure, complaint)
-    VALUES('$name', '$age', '$sex', '$address', '$bloodType', '$weight', '$height', '$temperature', '$bloodPressure', '$complaint')";
+    if (isset($_GET['edit'])) {
+        $sql = "UPDATE medical_record set name = '$name', age = '$age', sex = '$sex', address = '$address', blood_type = '$bloodType', weight = '$weight', height = '$height', temperature = '$temperature', blood_pressure = '$bloodPressure', complaint = '$complaint'
+        WHERE id = '{$_GET['edit']}'";
+    } else {
+        // Insert data into database
+        $sql = "INSERT INTO medical_record (name, age, sex, address, blood_type, weight, height, temperature, blood_pressure, complaint)
+        VALUES('$name', '$age', '$sex', '$address', '$bloodType', '$weight', '$height', '$temperature', '$bloodPressure', '$complaint')";
+    }
     if ($conn->query($sql) === TRUE) {
-        echo "New record created successfully";
+        echo "sql execution successfully";
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
         die;
@@ -32,17 +37,16 @@ if (isset($_GET['edit'])) {
     $medicalRecord = $conn->query("SELECT * FROM medical_record WHERE id=" . $_GET['edit']);
 
     $row = $medicalRecord->fetch_assoc();
-    $name = $row['name'];
-    $age = $row['age'];
-    $sex = $row['sex'];
-    $address = $row['address'];
-    $bloodType = $row['blood_type'];
-    $weight = $row['weight'];
-    $height = $row['height'];
-    $temperature = $row['temperature'];
-    $bloodPressure = $row['blood_pressure'];
-    $complaint = $row['complaint'];
-
+    $editName = $row['name'];
+    $editAge = $row['age'];
+    $editSex = $row['sex'];
+    $editAddress = $row['address'];
+    $editBloodType = $row['blood_type'];
+    $editWeight = $row['weight'];
+    $editHeight = $row['height'];
+    $editTemperature = $row['temperature'];
+    $editBloodPressure = $row['blood_pressure'];
+    $editComplaint = $row['complaint'];
 }
 
 ?>
@@ -63,29 +67,29 @@ if (isset($_GET['edit'])) {
                 <h1 class="text-center">Medical Record Clinic 24Hours</h1>
 
                 <!-- create form with bahasa indonesia -->
-                <form action="index.php" method="post">
+                <form action="#" method="post">
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
                                 <label for="patientName">Nama Pasien</label>
-                                <input type="text" class="form-control" id="patientName" name="name" placeholder="Masukkan nama pasien">
+                                <input type="text" class="form-control" id="patientName" name="name" placeholder="Masukkan nama pasien" value="<?php echo isset($editName) ? $editName : ''; ?>">
                             </div>
                             <div class="form-group">
                                 <label for="age">Umur</label>
-                                <input type="number" class="form-control" id="age" name="age" placeholder="Masukkan umur pasien">
+                                <input type="number" class="form-control" id="age" name="age" placeholder="Masukkan umur pasien" value="<?php echo isset($editAge) ? $editAge : ''; ?>">
                             </div>
                             <!-- input jenis kelamin -->
                             <div class="form-group">
                                 <label for="gender">Jenis Kelamin</label>
                                 <select class="form-select" id="gender" name="sex">
-                                    <option value="L">Laki-laki</option>
-                                    <option value="P">Perempuan</option>
+                                    <option value="L" <?php echo (isset($editSex) && $editSex == 'L') ? "selected" : ""; ?>>Laki-laki</option>
+                                    <option value="P" <?php echo (isset($editSex) && $editSex == 'P') ? "selected" : ""; ?>>Perempuan</option>
                                 </select>
                             </div>
                             <!-- input alamat   -->
                             <div class="form-group">
                                 <label for="address">Alamat</label>
-                                <textarea class="form-control" id="address" name="address" rows="3" placeholder="Masukkan alamat pasien"></textarea>
+                                <textarea class="form-control" id="address" name="address" rows="3" placeholder="Masukkan alamat pasien"><?php echo isset($editAddress) ? $editAddress : ''; ?></textarea>
                             </div>
                         </div>
                         <div class="col-6">
@@ -93,47 +97,50 @@ if (isset($_GET['edit'])) {
                             <div class="form-group">
                                 <label for="bloodGroup">Golongan Darah</label>
                                 <select class="form-select" id="bloodGroup" name="bloodType">
-                                    <option value="A+">A+</option>
-                                    <option value="A-">A-</option>
-                                    <option value="B+">B+</option>
-                                    <option value="B-">B-</option>
-                                    <option value="AB+">AB+</option>
-                                    <option value="AB-">AB-</option>
-                                    <option value="O+">O+</option>
-                                    <option value="O-">O-</option>
+                                    <option value="A+" <?php echo (isset($editBloodType) && $editBloodType == 'A+') ? "selected" : ""; ?>>A+</option>
+                                    <option value="A-" <?php echo (isset($editBloodType) && $editBloodType == 'A-') ? "selected" : ""; ?>>A-</option>
+                                    <option value="B+" <?php echo (isset($editBloodType) && $editBloodType == 'B+') ? "selected" : ""; ?>>B+</option>
+                                    <option value="B-" <?php echo (isset($editBloodType) && $editBloodType == 'B-') ? "selected" : ""; ?>>B-</option>
+                                    <option value="AB+" <?php echo (isset($editBloodType) && $editBloodType == 'AB+') ? "selected" : ""; ?>>AB+</option>
+                                    <option value="AB-" <?php echo (isset($editBloodType) && $editBloodType == 'AB-') ? "selected" : ""; ?>>AB-</option>
+                                    <option value="O+" <?php echo (isset($editBloodType) && $editBloodType == 'O+') ? "selected" : ""; ?>>O+</option>
+                                    <option value="O-" <?php echo (isset($editBloodType) && $editBloodType == 'O-') ? "selected" : ""; ?>>O-</option>
                                 </select>
                             </div>
                             <!-- input berat badan -->
                             <div class="form-group">
                                 <label for="weight">Berat Badan</label>
-                                <input type="number" class="form-control" id="weight" name="weight" placeholder="Masukkan berat badan pasien (kg)">
+                                <input type="number" class="form-control" id="weight" name="weight" placeholder="Masukkan berat badan pasien (kg)" value="<?php echo isset($editWeight) ? $editWeight : ''; ?>">
                             </div>
                             <!-- input tinggi badan -->
                             <div class="form-group">
                                 <label for="height">Tinggi Badan</label>
-                                <input type="number" class="form-control" id="height" name="height" placeholder="Masukkan tinggi badan pasien (cm)">
+                                <input type="number" class="form-control" id="height" name="height" placeholder="Masukkan tinggi badan pasien (cm)" value="<?php echo isset($editHeight) ? $editHeight : ''; ?>">
                             </div>
                             <!-- input suhu tubuh -->
                             <div class="form-group">
                                 <label for="temperature">Suhu Tubuh</label>
-                                <input type="number" class="form-control" id="temperature" name="temperature" placeholder="Masukkan suhu tubuh pasien (°C)">
+                                <input type="number" class="form-control" id="temperature" name="temperature" placeholder="Masukkan suhu tubuh pasien (°C)" value="<?php echo isset($editTemperature) ? $editTemperature : ''; ?>">
                             </div>
                             <!-- input tekanan darah -->
                             <div class="form-group">
                                 <label for="bloodPressure">Tekanan Darah</label>
-                                <input type="text" class="form-control" id="bloodPressure" name="bloodPressure" placeholder="Masukkan tekanan darah pasien (mmHg)">
+                                <input type="text" class="form-control" id="bloodPressure" name="bloodPressure" placeholder="Masukkan tekanan darah pasien (mmHg)" value="<?php echo isset($editBloodPressure) ? $editBloodPressure : ''; ?>">
                             </div>
                         </div>
                         <div class="col-12">
                             <div class="form-group">
                                 <label for="keluhan">Keluhan</label>
-                                <textarea class="form-control" id="complaint" name="complaint" rows="3" placeholder="Masukkan keluhan utama pasien"></textarea>
+                                <textarea class="form-control" id="complaint" name="complaint" rows="3" placeholder="Masukkan keluhan utama pasien"><?php echo isset($editComplaint) ? $editComplaint : ''; ?></textarea>
                             </div>
-
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary mt-3">Submit</button>
-
+                    <?php if (isset($_GET['edit'])) { ?>
+                        <button type="submit" class="btn btn-primary mt-3">Simpan Update</button>
+                        <a href="index.php" class="btn btn-success mt-3">Tambah Baru</a>
+                    <?php } else { ?>
+                        <button type="submit" class="btn btn-primary mt-3">Simpan Tambah</button>
+                    <?php } ?>
                 </form>
             </div>
         </div>
