@@ -31,8 +31,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$medicalRecords = $conn->query("SELECT * FROM medical_record");
-
+if (isset($_GET['delete'])) {
+    $sql = "DELETE FROM medical_record WHERE `medical_record`.`id` = '{$_GET['delete']}'";
+    if ($conn->query($sql) === TRUE) {
+        echo "sql execution successfully";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+        die;
+    }
+}
 if (isset($_GET['edit'])) {
     $medicalRecord = $conn->query("SELECT * FROM medical_record WHERE id=" . $_GET['edit']);
 
@@ -48,6 +55,8 @@ if (isset($_GET['edit'])) {
     $editBloodPressure = $row['blood_pressure'];
     $editComplaint = $row['complaint'];
 }
+
+$medicalRecords = $conn->query("SELECT * FROM medical_record");
 
 ?>
 <!DOCTYPE html>
@@ -179,7 +188,7 @@ if (isset($_GET['edit'])) {
                                     <td><?php echo $row["complaint"]; ?></td>
                                     <td>
                                         <a href="?edit=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
-                                        <button class="btn btn-danger btn-sm">Delete</button>
+                                        <a href="?delete=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm">Hapus</a>
                                     </td>
                                 </tr>
                         <?php }
