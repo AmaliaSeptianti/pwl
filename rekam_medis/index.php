@@ -57,7 +57,6 @@ if (isset($_GET['edit'])) {
 }
 
 $medicalRecords = $conn->query("SELECT * FROM medical_record");
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
